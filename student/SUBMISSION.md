@@ -50,14 +50,24 @@ File per-mode `metrics_lidar.json`, `metrics_fused.json`, `grade_run_lidar.log`,
 Liệt kê phần bonus đã làm, file bằng chứng trong `student/bonus/` và kết quả chính
 (xem [RUBRIC.md](../RUBRIC.md) mục 2). Không làm thì ghi "Không".
 
-- Chưa thực hiện bonus.
+- **Phân tích calibration (+4, thử nghiệm ngắn 20 frame, frames 0–19, seed 0):** chạy `student/bonus/calibration_experiment.py`; offset tịnh tiến extrinsic theo trục camera-left, giữ nguyên các đầu vào khác. `calibration_results.csv/json` ghi innovation trước camera update đã được chấp nhận, số gate pass/reject và RMSE fused.
+
+  | Offset extrinsic | Median innovation accepted (px) | P95 (px) | Gate pass / reject | RMSE (m) | Matches / ghost / miss |
+  |---:|---:|---:|---:|---:|---:|
+  | 0.00 m | 18.68 | 30.08 | 40 / 363 | 0.154703 | 32 / 0 / 8 |
+  | +0.05 m | 15.54 | 26.18 | 40 / 363 | 0.146991 | 32 / 0 / 8 |
+  | +0.10 m | 14.10 | 23.26 | 40 / 363 | 0.148794 | 32 / 0 / 8 |
+
+  Trong mẫu ngắn này, lệch dương camera-left tình cờ làm innovation accepted và RMSE giảm; không thể suy ra calibration sai nói chung cải thiện tracking. Hướng lệch có thể bù residual sẵn có trong sample. Gate χ² theo Mahalanobis (2D, mức 0.995) loại 363 cặp ứng viên không tương thích nhưng vẫn nhận 40 cặp; gate xét residual đã chuẩn hóa theo covariance `S`, nên không phải mọi innovation pixel lớn đều bị loại. Kết quả chỉ là phân tích độ nhạy trên segment/frames đã ghi, không thay đổi calibration hoặc artifacts chính thức.
+- **Trực quan hóa (+3):** `visualize_camera_update.py` sinh `camera_update_bev_1.png` và `camera_update_bev_2.png`, cùng dữ liệu trong `camera_update_examples.json`. Ví dụ track 0: frame 10 residual pixel giảm `28.45 → 3.87 px`; frame 11 giảm `29.59 → 4.05 px` sau camera EKF update.
+- **CVAT (+3):** chưa có ảnh chụp import/kiểm tra trực quan trong CVAT.
 
 ## Khai báo sử dụng AI (bắt buộc)
 
 Ghi rõ, kể cả khi không dùng ("Không dùng AI"). Xem [RULES.md](../RULES.md) mục 2.
 
 - Công cụ đã dùng (ChatGPT, Copilot, Claude, …): ChatGPT (OpenCode).
-- Dùng cho phần nào (hàm, câu hỏi, debug): Hỗ trợ triển khai và rà soát Parts E–H; hỗ trợ giải thích kỹ thuật và checklist repo.
+- Dùng cho phần nào (hàm, câu hỏi, debug): Hỗ trợ triển khai và rà soát Parts E–H; hỗ trợ giải thích kỹ thuật, checklist repo, và scripts phân tích calibration/visualization bonus.
 - Cách bạn đã kiểm tra lại (pytest, chạy Waymo, đối chiếu công thức): `pytest student/tests -q` (128 passed); chạy Waymo compare seed 0 trên frames 0–198; dùng `fusion_lab.evaluation.validate_metrics_records` xác thực 398 records trong `grade_run.log` khớp `metrics.json`.
 
 ## Checklist nộp
@@ -65,7 +75,7 @@ Ghi rõ, kể cả khi không dùng ("Không dùng AI"). Xem [RULES.md](../RULES
 - [x] **Part E–H** trong `workspace/` đã implement; `pytest student/tests -q` không còn `failed`/`xfailed`
 - [x] Part A–D: không bắt buộc sửa (hoặc ghi chú nếu bạn đã sửa)
 - [x] Lần chạy chấm điểm: `--fusion compare --seed 0`, `frame_start: 0`, `frame_end: 198`
-- [ ] Đã commit `student/artifacts/metrics*.json` và `student/artifacts/grade_run*.log` (không sửa tay)
+- [x] Đã commit `student/artifacts/metrics*.json` và `student/artifacts/grade_run*.log` (không sửa tay)
 - [x] Đã điền đủ file này, gồm khai báo AI
 - [x] Không commit dữ liệu Waymo, weights, `paths.yaml`, API key
 - [ ] `python tools/check_submission.py` báo `KẾT QUẢ: SẴN SÀNG NỘP`

@@ -1,0 +1,4 @@
+camera_left_translation_offset_m,accepted_camera_updates,accepted_innovation_median_px,accepted_innovation_p95_px,camera_gate_passed,camera_gate_rejected,rmse_m,matches,ghost_track_frames,missed_gt_frames,frames,segment,seed
+0.0,40,18.67784287561389,30.07666281361871,40,363,0.15470279386936725,32,0,8,"[0, 19]",training_segment-1005081002024129653_5313_150_5333_150_with_camera_labels.tfrecord,0
+0.05,40,15.53500956207285,26.18441435406826,40,363,0.1469914955617891,32,0,8,"[0, 19]",training_segment-1005081002024129653_5313_150_5333_150_with_camera_labels.tfrecord,0
+0.1,40,14.098156320678157,23.262164717729018,40,363,0.14879383344514818,32,0,8,"[0, 19]",training_segment-1005081002024129653_5313_150_5333_150_with_camera_labels.tfrecord,0
